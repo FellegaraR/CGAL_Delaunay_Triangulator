@@ -27,5 +27,6 @@ int read_xy(string path, std::vector< Point > &points);
 bool read_z_and_fields(string path, map< Point, std::vector<double> > &p_fields);
 
 void write(string path, Delaunay &mesh, map< Point, std::vector<double> > &p_fields);
+void write_vtk(string path, Delaunay &mesh, map< Point, std::vector<double> > &p_fields);
 
 }

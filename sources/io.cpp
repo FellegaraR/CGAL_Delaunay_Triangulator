@@ -144,5 +144,72 @@ void write(string path, Delaunay &mesh, map< Point, std::vector<double> > &p_fie
   output.close();
 }
 
+void write_vtk(string path, Delaunay &mesh, map< Point, std::vector<double> > &p_fields) 
+{
+  ofstream output(path.c_str());
+  output.unsetf( std::ios::floatfield ); // floatfield not set
+  output.precision(21);
+
+  output<<"# vtk DataFile Version 2.0" << endl << endl
+        << "ASCII" << endl << "DATASET UNSTRUCTURED_GRID " <<  endl << endl;
+
+  output<< "POINTS " << mesh.number_of_vertices() << " float" << endl;
+
+  size_t count = 0;
+  int field_number = -1;
+  for (Delaunay::Finite_vertices_iterator it = mesh.finite_vertices_begin();
+       it != mesh.finite_vertices_end(); it++)
+  {
+      Point &p = it->point();
+      // cout<< p <<endl;
+      output << *it << " 0 "; // set a dummy z value for having a flat TIN
+      if(p_fields.size() > 0 && field_number == -1)
+      {
+        map< Point, std::vector<double> >::iterator flist = p_fields.find(p);
+        /*if(it != p_fields.end())
+        {
+          for(auto f : it->second)
+            output << f << " ";
+        }*/
+        //output << flist->second.at(0) << " "; // z
+		//if(field_number == -1)
+		field_number = flist->second.size();
+      }
+      output << endl;
+      it->info() = count++;
+  }
+
+  output<<endl << "CELLS " << mesh.number_of_faces() << " " << (mesh.number_of_faces()*4) << endl;
+
+  for (Delaunay::Finite_faces_iterator it = mesh.finite_faces_begin(); it != mesh.finite_faces_end(); it++) {
+      Delaunay::Face f = *it;
+      output << "3 " << f.vertex(0)->info() << " " << f.vertex(1)->info() << " " << f.vertex(2)->info() << endl;
+  }
+
+  output<< endl << "CELL_TYPES " << mesh.number_of_faces() << endl;
+  for (int i = 0; i < mesh.number_of_faces(); ++i)
+      output<< "6 ";
+  output<< endl;
+
+  if(p_fields.size() > 0)
+  {
+	output<< "POINT_DATA " << mesh.number_of_vertices() << endl << endl;
+	output<< "FIELD FieldData "<<field_number<< endl << endl;
+    for(int f=0; f<field_number; f++)
+    {
+		output<< "elev"<<f<<" 1 "<< mesh.number_of_vertices() << " float" << endl;
+		for (Delaunay::Finite_vertices_iterator it = mesh.finite_vertices_begin();
+          it != mesh.finite_vertices_end(); it++)
+		{
+			Point &p = it->point();
+			map< Point, std::vector<double> >::iterator flist = p_fields.find(p);
+			output << flist->second.at(f) << " "; // f-th field value
+		}
+		output<<endl;
+	}
+  }
+  output.close();
+}
+
 }
 
