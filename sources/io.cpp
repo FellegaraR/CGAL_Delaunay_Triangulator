@@ -188,7 +188,7 @@ void write_vtk(string path, Delaunay &mesh, map< Point, std::vector<double> > &p
 
   output<< endl << "CELL_TYPES " << mesh.number_of_faces() << endl;
   for (int i = 0; i < mesh.number_of_faces(); ++i)
-      output<< "6 ";
+      output<< "5 ";
   output<< endl;
 
   if(p_fields.size() > 0)
@@ -197,7 +197,8 @@ void write_vtk(string path, Delaunay &mesh, map< Point, std::vector<double> > &p
 	output<< "FIELD FieldData "<<field_number<< endl << endl;
     for(int f=0; f<field_number; f++)
     {
-		output<< "elev"<<f<<" 1 "<< mesh.number_of_vertices() << " float" << endl;
+		stringstream stream; stream << std::setfill('0') << std::setw(3) << f;
+		output<< "elev"<<stream.str()<<" 1 "<< mesh.number_of_vertices() << " float" << endl;
 		for (Delaunay::Finite_vertices_iterator it = mesh.finite_vertices_begin();
           it != mesh.finite_vertices_end(); it++)
 		{
