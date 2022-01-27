@@ -12,33 +12,36 @@ int main(int argc, char** argv)
       return 0;
   }
   string path = argv[1];
-  size_t points_num = count_lines(path);
-  cout<<"Points number: "<<points_num<<endl;
+  //size_t points_num = count_lines(path);
+  //cout<<"Points number: "<<points_num<<endl;
+  string extension = get_file_extension(path);
 
   string format = argv[2];
   cout<<"File format: "<<format<<endl;
 
   cout<<"reading points x and y coordinates from "<<path<<endl;
-  std::vector< Point > points; points.reserve(points_num);
-  std::map< Point, std::vector<double> > p_fields; //p_fields.reserve(points_num);
-  int fields_num = read_xy(path,points);
-  if(fields_num==-1)//unsupported delimiter
-      return 0;//exit
+  std::vector< Point > points; //points.reserve(points_num);
+  std::map< Point, std::vector<float> > p_fields; //p_fields.reserve(points_num);
+  
+  bool read = false;
+  if(extension == "csv" || extension == "txt") // we have a text file in ASCII
+    read = read_text_file(path,points,p_fields);
+  else // binary file
+    read = read_binary_file(path,points,p_fields);
+
+  if(!read) // failed to read the file
+    return 0;  
 
   cout<<"points read: "<<points.size()<<endl;
-  cout<<"unique points: "<<std::set<Point>(points.begin(), points.end()).size()<<endl;
+  //cout<<"unique points: "<<std::set<Point>(points.begin(), points.end()).size()<<endl;
+  cout<<"p_fields size: "<<p_fields.size()<<endl;
 
   cout<<"generating Delaunay triangulation "<<endl;
   Delaunay mesh;
   mesh.insert( points.begin(),points.end() );
   cout<<"vertices: "<<mesh.number_of_vertices()<<endl<<"triangles: "<<mesh.number_of_faces()<<endl;
   points.clear();
-  if(fields_num == 2)
-  {
-    cout<<"read z coordinate and field values from "<<path<<endl;
-    if(!read_z_and_fields(path,p_fields))//if unsupported delimiter
-        return 0;//exit
-  }
+  
   // generate the output path
   string p = get_path(path);
   string fname = get_file_name(path);
@@ -57,7 +60,7 @@ int main(int argc, char** argv)
   // CGAL_assertion( mesh.number_of_vertices() == points_num );
   cout<<"writing indexed mesh representation "<<ss.str()<<endl;
   if(format == "off")
-    write(ss.str(),mesh,p_fields);
+    write_off(ss.str(),mesh,p_fields);
   else if(format == "vtk")
     write_vtk(ss.str(),mesh,p_fields);
   else

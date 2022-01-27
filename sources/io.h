@@ -22,11 +22,10 @@ namespace io
 
 size_t count_lines(string path);
 
-int read_xy(string path, std::vector< Point > &points);
+bool read_text_file(string path, std::vector< Point > &points, map< Point, std::vector<float> > &p_fields);
+bool read_binary_file(string path, std::vector< Point > &points, map< Point, std::vector<float> > &p_fields);
 
-bool read_z_and_fields(string path, map< Point, std::vector<double> > &p_fields);
-
-void write(string path, Delaunay &mesh, map< Point, std::vector<double> > &p_fields);
-void write_vtk(string path, Delaunay &mesh, map< Point, std::vector<double> > &p_fields);
+void write_off(string path, Delaunay &mesh, map< Point, std::vector<float> > &p_fields);
+void write_vtk(string path, Delaunay &mesh, map< Point, std::vector<float> > &p_fields);
 
 }
