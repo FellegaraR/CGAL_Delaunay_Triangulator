@@ -40,10 +40,10 @@ bool read_binary_file(string path, std::vector< Point > &points, map< Point, std
       return true;
   }
   
-  float points_num, ts;
+  int points_num, ts;
   // we have a simple metadate on top of the binary file telling us how many points and how many scalar fields (for each point) are in the file
-  input.read(reinterpret_cast<char*>(&points_num),sizeof(float));
-  input.read(reinterpret_cast<char*>(&ts),sizeof(float));
+  input.read(reinterpret_cast<char*>(&points_num),sizeof(int));
+  input.read(reinterpret_cast<char*>(&ts),sizeof(int));
   
   cout<<points_num<<" "<<ts<<endl;
   
