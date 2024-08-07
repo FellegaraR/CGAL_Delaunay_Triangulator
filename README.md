@@ -13,14 +13,16 @@ run the following command in the terminal: `sudo apt install libcgal-dev`
 ### how to install VTK in ubuntu 20.04
 run the following command in the terminal: `sudo apt install libvtk7-dev`
 
-Since vtk7 is a fairly old version of VTK it is common to compile VTK from source ([link](https://vtk.org/download/)).
+Since vtk7 is a fairly old version of VTK it is common to compile VTK from source ([link](https://vtk.org/download/)). 
+Build instruction can be found at the following [link](https://gitlab.kitware.com/vtk/vtk/-/blob/master/Documentation/docs/build_instructions/build.md).
 In this latter case, you have to specify `VTK_DIR` before calling `cmake` command.
 
 ## how to compile
 
 1. open the terminal in the source folder
 2. then, run the following command in the terminal: `cmake .` or `cmake -DVTK_DIR=<path/to/the/install/folder/of/vtk> .`
-3. a file named `dtri` should be generated if the compilation process ends correctly
+3. if the generation is done, then type `make` for compiling the triangulator
+4. a file named `dtri` should be generated if the compilation process ends correctly
 
 ## how to execute
 
